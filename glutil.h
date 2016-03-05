@@ -62,6 +62,8 @@ public:
     public:
         uniform(GLint location);
 
+        bool is_valid() const;
+
         void set_f(GLfloat v0);
         void set_f(GLfloat v0, GLfloat v1);
         void set_f(GLfloat v0, GLfloat v1, GLfloat v2);

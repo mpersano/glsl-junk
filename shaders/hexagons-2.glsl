@@ -95,5 +95,5 @@ void main()
         float r = mix(r1, r0, time);
         float v = inside_triangles(pos, r) + inside_polygon(pos, vec2(0., 0.), r, 6., PI/6.);
 
-        color = mix(vec4(.5, 1., 1., 1.), vec4(.0, .25, .25, 1.), min(v, 1.));
+        color = mix(vec4(1., 1., 1., 1.), vec4(.25, .25, .25, 1.), min(v, 1.));
 }

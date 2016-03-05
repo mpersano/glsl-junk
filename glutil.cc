@@ -67,7 +67,7 @@ program::link()
     int rv;
     GL_CHECK(glGetProgramiv(id_, GL_LINK_STATUS, &rv));
     if (!rv)
-        panic("failed to link program");
+        panic("failed to link program\n");
 }
 
 void
@@ -80,9 +80,13 @@ program::uniform
 program::get_uniform(const std::string& name)
 {
     GLint location = GL_CHECK_R(glGetUniformLocation(id_, name.c_str()));
-    if (location < 0)
-        panic("invalid uniform %s", name.c_str());
     return uniform(location);
+}
+
+bool
+program::uniform::is_valid() const
+{
+    return location_ != -1;
 }
 
 program::uniform::uniform(GLint location)

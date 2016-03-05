@@ -68,7 +68,8 @@ demo::redraw()
         t = fmod(dt, period)/period;
     }
 
-    time_uniform_->set_f(t);
+    if (time_uniform_->is_valid())
+        time_uniform_->set_f(t);
 
     vbo_.bind();
     GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
