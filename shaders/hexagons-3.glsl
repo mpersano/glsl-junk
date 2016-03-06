@@ -1,5 +1,8 @@
 #version 300 es
 
+// see http://glslsandbox.com/e#31298 for uglier webgl version
+// (without arrays, for loops without constant expressions, etc)
+
 precision highp float;
 
 uniform float time;
@@ -11,11 +14,18 @@ const float PI = 3.14159265358979323844;
 
 const vec2 text_size = vec2(80., 16.); // pixels
 
-const float text[160] = float[160](251,255,255,255,127,255,255,255,255,254,251,193,63,128,127,255,255,255,255,254,251,221,160,187,127,255,1,192,255,254,131,221,187,187,127,255,255,249,0,0,187,221,59,128,1,128,255,92,255,254,187,221,187,187,125,191,127,94,255,254,153,221,160,187,125,191,127,255,31,254,213,221,59,128,125,191,63,255,207,252,212,221,251,251,125,191,191,255,239,253,199,221,251,251,125,191,191,255,239,253,239,92,59,128,1,128,191,255,207,253,199,94,227,251,127,255,63,255,31,252,87,62,248,251,127,255,127,254,255,254,147,255,255,251,127,255,255,248,127,254,57,255,31,0,127,255,255,227,63,255,124,0,255,255,127,255,255,255,143,255);
+const float text[54] = float[54](
+	0x000004, 0x008000, 0x000000, 0x3e0401, 0x807fc0, 0x000000, 0x040100, 0x445f22,
+	0xfe0080, 0x01003f, 0x44227c, 0x008044, 0xff0600, 0x2244ff, 0xfe7fc4, 0xa3007f,
+	0x440100, 0x444422, 0x804082, 0x0100a1, 0x5f2266, 0x408244, 0xe00080, 0x222a01,
+	0x827fc4, 0x00c040, 0x2b0330, 0x040422, 0x404082, 0x021000, 0x042238, 0x408204,
+	0x100040, 0xa31002, 0xfe7fc4, 0x00407f, 0x380230, 0x041ca1, 0xc00080, 0x03e000,
+	0x07c1a8, 0x008004, 0x000180, 0x006c01, 0x800400, 0x070000, 0xc60180, 0xffe000,
+	0x000080, 0x00c01c, 0x00ff83, 0x008000, 0x700000, 0xffff00 );
 
 float wobble(vec2 pos)
 {
-	return .5 + .5*sin(time*2.*PI + 3.*length(pos));
+	return .5 + .5*sin(time*2.*PI - 3.5*length(pos));
 }
 
 float in_hexagon(vec2 pos, vec2 center, float r)
@@ -45,16 +55,15 @@ float in_cluster(vec2 pos)
 
 float in_text(vec2 pos)
 {
-	vec2 p = vec2(pos.x, -pos.y)*80. + .5*text_size;
+	vec2 p = floor(vec2(pos.x, -pos.y)*80. + .5*text_size);
 
 	if (any(greaterThanEqual(p, text_size)) || any(lessThan(p, vec2(0.))))
 		return 0.;
 
-	vec2 uv = floor(p);
+	float idx = p.y*text_size.x + p.x;
 
-	float v = text[int(uv.y*(text_size.x/8.) + floor(uv.x/8.))];
-
-	return 1. - mod(floor(v/pow(2., mod(uv.x, 8.))), 2.);
+	float v = text[int(floor(idx/24.))];
+	return mod(floor(v/pow(2., mod(idx, 24.))), 2.);
 }
 
 void main()
@@ -68,5 +77,5 @@ void main()
 	float v0 = in_cluster(pos)*mix(1., .25, step(pos.y, .2)*step(-.2, pos.y))*s;
 	float v1 = in_text(pos)*(s + .25);
 
-	color = mix(bg, vec4(.5, 1., .5, 1.), v0) + mix(vec4(0., 0., 0., 1.), vec4(.75, 1., .75, 1.), v1);
+	color = mix(bg, vec4(.5, 2., .5, 1.), v0) + mix(vec4(0., 0., 0., 1.), vec4(.75, 1., .75, 1.), v1);
 }
