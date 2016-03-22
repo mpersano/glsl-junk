@@ -11,27 +11,17 @@ const float PI = 3.14159265358979323844;
 
 bool intersects(vec3 ro, vec3 rd, vec3 box_min, vec3 box_max, out float t_intersection)
 {
-    float t_near = -1e6;
-    float t_far = 1e6;
+    vec3 t1 = (box_min - ro)/rd;
+    vec3 t2 = (box_max - ro)/rd;
 
-    for (int i = 0; i < 3; i++) {
-        if (rd[i] == 0.) {
-            // ray is parallel to plane
-            if (ro[i] < box_min[i] || ro[i] > box_max[i])
-                return false;
-        } else {
-            vec2 t = vec2(box_min[i] - ro[i], box_max[i] - ro[i])/rd[i];
+    vec3 t_min = min(t1, t2);
+    vec3 t_max = max(t1, t2);
 
-            if (t[0] > t[1])
-                t = t.yx;
+    float t_near = max(t_min.x, max(t_min.y, t_min.z));
+    float t_far = min(t_max.x, min(t_max.y, t_max.z));
 
-            t_near = max(t_near, t[0]);
-            t_far = min(t_far, t[1]);
-
-            if (t_near > t_far || t_far < 0.)
-                return false;
-        }
-    }
+    if (t_near > t_far || t_far < 0.)
+        return false;
 
     t_intersection = t_near;
 
@@ -39,7 +29,8 @@ bool intersects(vec3 ro, vec3 rd, vec3 box_min, vec3 box_max, out float t_inters
 }
 
 // (function borrowed from a shader found on GLSL Sandbox)
-mat3 camera(vec3 e, vec3 la) {
+mat3 camera(vec3 e, vec3 la)
+{
     vec3 roll = vec3(0, 1, 0);
     vec3 f = normalize(la - e);
     vec3 r = normalize(cross(roll, f));
