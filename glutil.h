@@ -40,7 +40,7 @@ public:
     shader(GLenum type);
 
     void set_source(const std::string& source);
-    void load_source(const std::string& filename);
+    bool load_source(const std::string& filename);
 
 private:
     friend class program;

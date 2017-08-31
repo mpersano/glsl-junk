@@ -9,14 +9,14 @@
 class demo
 {
 public:
-    demo(int width, int height, const char *shader);
+    demo(int width, int height, const std::string& shader_source);
 
     void dump_frames(int num_frames);
 
     bool redraw();
 
 private:
-    void init(const char *shader);
+    void init(const std::string& shader_source);
 
     int width_, height_;
 

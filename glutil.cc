@@ -36,13 +36,19 @@ shader::set_source(const std::string& source)
     }
 }
 
-void
+bool
 shader::load_source(const std::string& filename)
 {
-    std::ifstream file(filename);
+    std::ifstream in(filename);
+
+    if (!in.is_open())
+        return false;
+
     std::stringstream buffer;
-    buffer << file.rdbuf();
+    buffer << in.rdbuf();
     set_source(buffer.str());
+
+    return true;
 }
 
 //
