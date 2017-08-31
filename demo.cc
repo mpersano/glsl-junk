@@ -19,6 +19,16 @@ get_cur_ms()
     return static_cast<uint64_t>(ts.tv_sec*1000) + static_cast<uint64_t>(ts.tv_nsec/1000000);
 }
 
+const std::string vertex_shader_code {
+    "#version 300 es\n"
+    "precision highp float;\n"
+    "layout(location = 0) in vec2 pos;\n"
+    "void main()\n"
+    "{"
+    "    gl_Position = vec4(pos.x, pos.y, 0., 1.);\n"
+    "}"
+};
+
 }
 
 demo::demo(int width, int height, const std::string& shader_source)
@@ -106,7 +116,7 @@ demo::init(const std::string& shader_source)
     // vert/frag shaders
 
     gl::shader vert_shader(GL_VERTEX_SHADER);
-    vert_shader.load_source("shaders/vert.glsl");
+    vert_shader.set_source(vertex_shader_code);
 
     gl::shader frag_shader(GL_FRAGMENT_SHADER);
     if (!frag_shader.load_source(shader_source))
